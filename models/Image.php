@@ -11,12 +11,12 @@ class Image extends BaseImage
 
     public function getSrc($size)
     {
-        ImagesHolderModule::getInstance()->getSrc($this, $size);
+        return Yii::app()->getModule("imagesHolder")->getSrc($this, $size);
     }
 
     public function delete()
     {
-        ImagesHolderModule::getInstance()->deleteImage($this);
+        Yii::app()->getModule("imagesHolder")->deleteImage($this);
         return parent::delete();
     }
 }

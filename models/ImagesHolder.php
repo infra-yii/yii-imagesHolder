@@ -11,7 +11,11 @@ class ImagesHolder extends BaseImagesHolder
 
     public function delete()
     {
-        ImagesHolderModule::getInstance()->deleteHolder($this);
+        Yii::app()->getModule("imagesHolder")->deleteHolder($this);
         return parent::delete();
+    }
+
+    public function setImages() {
+        Yii::app()->getModule("imagesHolder")->setImages($this);
     }
 }

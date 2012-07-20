@@ -1,6 +1,9 @@
 <?php
 
-Yii::import('application.extensions.image.Image_Driver');
+Yii::import('imagesHolder.extensions.image.Image_Driver');
+
+include dirname(__FILE__)."/drivers/Image_GD_Driver.php";
+include dirname(__FILE__)."/drivers/Image_ImageMagick_Driver.php";
 
 /**
  * Manipulate images using standard methods such as resize, crop, rotate, etc.

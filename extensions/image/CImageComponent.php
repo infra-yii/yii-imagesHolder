@@ -1,6 +1,6 @@
 <?php
 
-Yii::import('application.extensions.image.ImageProcessor');
+Yii::import('imagesHolder.extensions.image.ImageProcessor');
 
 /**
  * Description of CImageComponent

@@ -7,14 +7,11 @@ class ImagesHolderModule extends CWebModule
     public $rootDir = "assets";
     public $ext = "jpg";
 
-    private static $instance;
-
     public function init()
     {
         $this->setImport(array(
             'imagesHolder.models.*',
         ));
-        self::$instance = $this;
     }
 
     public function setImages(ImagesHolder $holder)
@@ -39,7 +36,7 @@ class ImagesHolderModule extends CWebModule
             }
 
             $im = new Image();
-            $im->holder_id = $this->id;
+            $im->holder_id = $holder->id;
             $im->title = $title;
             if ($im->save()) {
                 $this->setImageFile($im, $f->tempName);
@@ -128,10 +125,11 @@ class ImagesHolderModule extends CWebModule
         return "/" . $this->getFilePath($image, $size);
     }
 
-    public function getMaxNewNum(ImagesHolder $holder, $type=null)
+    public function getMaxNewNum($holder, $type=null)
     {
         if(!$holder) {
-
+            $params = $this->getParamsByType($type);
+            return $params["maxNum"] ? $params["maxNum"] : 5;
         }
         $params = $this->getParamsByHolder($holder);
         $maxNum = $params["maxNum"];
@@ -143,14 +141,5 @@ class ImagesHolderModule extends CWebModule
     private function getFilePath(Image $image, $size)
     {
         return $this->getBaseDir($image->holder) . "/" . $size . "/" . $image->id . "." . $this->ext;
-    }
-
-    /**
-     * @static
-     * @return ImagesHolderModule
-     */
-    static public function getInstance()
-    {
-        return self::$instance;
     }
 }

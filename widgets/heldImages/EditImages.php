@@ -19,8 +19,8 @@ class EditImages extends CWidget
         }
 
         // We need maxNum and preview size name to render edit
-        $maxNum = ImagesHolderModule::getInstance()->getMaxNewNum($this->holder, $this->type);
-        $params = ImagesHolderModule::getInstance()->getParamsByType($this->type);
+        $maxNum = Yii::app()->getModule("imagesHolder")->getMaxNewNum($this->holder, $this->type);
+        $params = Yii::app()->getModule("imagesHolder")->getParamsByType($this->type);
         $previewSize = $params["preview"];
 
         $images = array();
