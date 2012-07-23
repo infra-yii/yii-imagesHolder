@@ -25,7 +25,7 @@ abstract class BaseImage extends GxActiveRecord
 
     public function tableName()
     {
-        return '{{image}}';
+        return '{{held_image}}';
     }
 
     public static function label($n = 1)

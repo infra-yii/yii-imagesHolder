@@ -12,7 +12,7 @@
  * @property integer $id
  * @property string $type
  *
- * @property Image[] $images
+ * @property HeldImage[] $images
  */
 abstract class BaseImagesHolder extends GxActiveRecord
 {
@@ -49,7 +49,7 @@ abstract class BaseImagesHolder extends GxActiveRecord
     public function relations()
     {
         return array(
-            'images' => array(self::HAS_MANY, 'Image', 'holder_id'),
+            'images' => array(self::HAS_MANY, 'HeldImage', 'holder_id'),
         );
     }
 

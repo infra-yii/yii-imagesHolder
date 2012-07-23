@@ -2,7 +2,7 @@
 
 Yii::import('imagesHolder.models._base.BaseImage');
 
-class Image extends BaseImage
+class HeldImage extends BaseImage
 {
     public static function model($className = __CLASS__)
     {
