@@ -35,7 +35,7 @@ class ImagesHolderModule extends CWebModule
                 $title = $f->name;
             }
 
-            $im = new Image();
+            $im = new HeldImage();
             $im->holder_id = $holder->id;
             $im->title = $title;
             if ($im->save()) {
@@ -44,7 +44,7 @@ class ImagesHolderModule extends CWebModule
         }
     }
 
-    private function updateImageFromPost(Image $im)
+    private function updateImageFromPost(HeldImage $im)
     {
         if (isset($_POST["image_{$im->id}_remove"])) {
             $im->delete();
@@ -63,7 +63,7 @@ class ImagesHolderModule extends CWebModule
         }
     }
 
-    public function setImageFile(Image $image, $filename)
+    public function setImageFile(HeldImage $image, $filename)
     {
         if (!$image->id) {
             throw new Exception("Cannot set image file to unsaved domain");
@@ -89,7 +89,7 @@ class ImagesHolderModule extends CWebModule
         }
     }
 
-    public function deleteImage(Image $image)
+    public function deleteImage(HeldImage $image)
     {
         $params = $this->getParamsByHolder($image->holder);
 
@@ -120,7 +120,7 @@ class ImagesHolderModule extends CWebModule
         return $this->getParamsByType($holder->type);
     }
 
-    public function getSrc(Image $image, $size)
+    public function getSrc(HeldImage $image, $size)
     {
         return "/" . $this->getFilePath($image, $size);
     }
@@ -138,7 +138,7 @@ class ImagesHolderModule extends CWebModule
         else return $maxNum - count($holder->images);
     }
 
-    private function getFilePath(Image $image, $size)
+    private function getFilePath(HeldImage $image, $size)
     {
         return $this->getBaseDir($image->holder) . "/" . $size . "/" . $image->id . "." . $this->ext;
     }
