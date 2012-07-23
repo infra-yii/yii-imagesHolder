@@ -5,7 +5,8 @@ class m120716_131901_images extends CDbMigration
     public function up()
     {
         $this->createTable("{{images_holder}}", array(
-            "id" => "pk"
+            "id" => "pk",
+            "type" => "varchar(16) not null"
         ));
         $this->createTable("{{held_image}}", array(
             "id" => "pk",
