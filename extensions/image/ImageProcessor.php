@@ -2,9 +2,6 @@
 
 Yii::import('imagesHolder.extensions.image.Image_Driver');
 
-include dirname(__FILE__)."/drivers/Image_GD_Driver.php";
-include dirname(__FILE__)."/drivers/Image_ImageMagick_Driver.php";
-
 /**
  * Manipulate images using standard methods such as resize, crop, rotate, etc.
  * This class must be re-initialized for every image you wish to manipulate.
@@ -123,7 +120,7 @@ class ImageProcessor
         $driver = 'Image_' . ucfirst($this->config['driver']) . '_Driver';
 
         // Load the driver
-        Yii::import("application.extensions.image.drivers.$driver");
+        Yii::import("imagesHolder.extensions.image.drivers.$driver");
 
         // Initialize the driver
         $this->driver = new $driver($this->config['params']);
