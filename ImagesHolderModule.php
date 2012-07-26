@@ -81,18 +81,18 @@ class ImagesHolderModule extends CWebModule
             }
 
             $tmp = clone $im;
-            if(!$info) {
-                copy($filename, $this->getFilePath($image, $size));
-                continue;
-            }
 
-            list($w, $h) = explode("x", $info, 2);
-            $op = "resize";
-            if(strpos($h, " ")) {
-                list($h, $op) = explode(" ", $h, 2);
-            }
+            if($info) {
 
-            $tmp->$op($w, $h);
+                list($w, $h) = explode("x", $info, 2);
+                $op = "resize";
+                if(strpos($h, " ")) {
+                    list($h, $op) = explode(" ", $h, 2);
+                }
+
+                $tmp->$op($w, $h);
+
+            }
 
             $tmp->save($this->getFilePath($image, $size));
         }
