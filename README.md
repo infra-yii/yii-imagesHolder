@@ -1,6 +1,8 @@
 yii-imagesHolder
 ================
 
+`git submodule add git@github.com:alari/yii-imagesHolder.git protected/modules/imagesHolder`
+
 ```
     'components' => array(
             'image' => array(
