@@ -69,7 +69,9 @@ class ImagesHolderModule extends CWebModule
             throw new Exception("Cannot set image file to unsaved domain");
         }
 
-        $im = Yii::app()->image->load($filename)->quality(100);
+        /* @var $imagine Imagine\Image\ImagineInterface */
+        $imagine = Yii::app()->imagine->getImagine();
+        $im = $imagine->open($filename);
 
         $params = $this->getParamsByHolder($image->holder);
         $basedir = $this->getBaseDir($image->holder);
@@ -90,8 +92,14 @@ class ImagesHolderModule extends CWebModule
                     list($h, $op) = explode(" ", $h, 2);
                 }
 
-                $tmp->$op($w, $h);
-
+                $size = new Imagine\Image\Box($w, $h);
+                if($op == "resize") {
+                    $tmp = $tmp->resize($size);
+                } else if($op == "crop") {
+                    $tmp = $tmp->crop(new Imagine\Image\Point(0, 0), $size);
+                } else if($op == "thumb") {
+                    $tmp = $tmp->thumbnail($size);
+                }
             }
 
             $tmp->save($this->getFilePath($image, $size));

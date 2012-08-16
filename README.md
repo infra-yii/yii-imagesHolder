@@ -1,17 +1,12 @@
 yii-imagesHolder
 ================
 
-`git submodule add git@github.com:alari/yii-imagesHolder.git protected/modules/imagesHolder`
+```
+git submodule add git@github.com:alari/yii-imagesHolder.git protected/modules/imagesHolder
+git submodule add git@github.com:alari/yii-imagine.git protected/extensions/imagine
+```
 
 ```
-    'components' => array(
-            'image' => array(
-                'class' => 'imagesHolder.extensions.image.CImageComponent',
-                // GD or ImageMagick
-                'driver' => 'GD',
-            ),
-    ),
-
     'modules' => array(
             'imagesHolder' => array(
                 'types' => array(
@@ -21,7 +16,8 @@ yii-imagesHolder
                         'default' => 'big',
                         'sizes' => array(
                             "big" => "800x600",
-                            "tiny" => "120x120"
+                            "tiny" => "120x120 thumb",
+                            "partial" => "200x200 crop"
                         )
                     )
                 )
