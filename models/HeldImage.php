@@ -51,7 +51,8 @@ class HeldImage extends BaseImage
      * @private
      */
     public function setImageFile($filename) {
-        $im = $this->getImagine()->open($filename);
+        /* @var $imagine ImagineYii */
+        $imagine = Yii::app()->imagine;
 
         $params = $this->holder->getModuleParams();
         $basedir = $this->getBaseDir();
@@ -62,27 +63,24 @@ class HeldImage extends BaseImage
                 mkdir($basedir . "/" . $size);
             }
 
-            $tmp = $im;
-
             if ($info) {
-
                 list($w, $h) = explode("x", $info, 2);
                 $op = "resize";
                 if (strpos($h, " ")) {
                     list($h, $op) = explode(" ", $h, 2);
                 }
 
-                $box = new Imagine\Image\Box($w, $h);
-                if ($op == "resize") {
-                    $tmp = $tmp->resize($box);
-                } else if ($op == "crop") {
-                    $tmp = $tmp->crop(new Imagine\Image\Point(0, 0), $box);
+                if ($op == "crop") {
+                    $im = $imagine->crop($filename, $w, $h);
                 } else if ($op == "thumb") {
-                    $tmp = $tmp->thumbnail($box);
+                    $im = $imagine->thumb($filename, $w, $h);
+                } else {
+                    $im = $imagine->resize($filename, $w, $h);
                 }
+                $im->save($this->getFilePath($size));
+            } else {
+                copy($filename, $this->getFilePath($size));
             }
-
-            $tmp->save($this->getFilePath($size));
         }
     }
 
@@ -99,13 +97,6 @@ class HeldImage extends BaseImage
     {
         // TODO: save image extension
         return $this->getBaseDir() . "/" . $size . "/" . $this->id . "." . $this->getModule()->ext;
-    }
-
-    /**
-     * @return Imagine\Image\ImagineInterface
-     */
-    private function getImagine() {
-        return Yii::app()->imagine->getImagine();
     }
 
     /**
