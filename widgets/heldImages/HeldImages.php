@@ -13,6 +13,7 @@ class HeldImages extends CWidget
 
     public function run()
     {
+        if(!$this->holder || !count($this->holder->images)) return;
         if (!$this->size) {
             $this->size = Yii::app()->getModule("imagesHolder")->getParamsByHolder($this->holder);
             $this->size = $this->size["default"];

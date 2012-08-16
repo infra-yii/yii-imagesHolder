@@ -7,6 +7,10 @@ git submodule add git@github.com:alari/yii-imagine.git protected/extensions/imag
 ```
 
 ```
+    'import' => array(
+        // For imagesHolder
+        'application.modules.imagesHolder.models.*',
+
     'modules' => array(
             'imagesHolder' => array(
                 'types' => array(

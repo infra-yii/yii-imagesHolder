@@ -11,12 +11,107 @@ class HeldImage extends BaseImage
 
     public function getSrc($size)
     {
-        return Yii::app()->getModule("imagesHolder")->getSrc($this, $size);
+        return "/".$this->getFilePath($size);
     }
 
     public function delete()
     {
-        Yii::app()->getModule("imagesHolder")->deleteImage($this);
+        $params = $this->holder->getModuleParams();
+
+        foreach (array_keys($params["sizes"]) as $size) {
+            if (is_file($this->getFilePath($size))) {
+                unlink($this->getFilePath($size));
+            }
+        }
         return parent::delete();
+    }
+
+    /**
+     * @private
+     */
+    public function updateImageFromPost() {
+        if (isset($_POST["image_{$this->id}_remove"])) {
+            $this->delete();
+            return;
+        }
+
+        $f = CUploadedFile::getInstanceByName("image_" . $this->id . "_file");
+        if ($f) {
+            $this->setImageFile($f->tempName);
+        }
+
+        if (isset($_POST["image_{$this->id}_title"])) {
+            if ($this->title == $_POST["image_{$this->id}_title"]) return;
+            $this->title = $_POST["image_{$this->id}_title"];
+            $this->save();
+        }
+    }
+
+    /**
+     * @private
+     */
+    public function setImageFile($filename) {
+        $im = $this->getImagine()->open($filename);
+
+        $params = $this->holder->getModuleParams();
+        $basedir = $this->getBaseDir();
+        if (!is_dir($basedir)) mkdir($basedir, 0777, true);
+
+        foreach ($params["sizes"] as $size => $info) {
+            if (!is_dir($basedir . "/" . $size)) {
+                mkdir($basedir . "/" . $size);
+            }
+
+            $tmp = $im;
+
+            if ($info) {
+
+                list($w, $h) = explode("x", $info, 2);
+                $op = "resize";
+                if (strpos($h, " ")) {
+                    list($h, $op) = explode(" ", $h, 2);
+                }
+
+                $box = new Imagine\Image\Box($w, $h);
+                if ($op == "resize") {
+                    $tmp = $tmp->resize($box);
+                } else if ($op == "crop") {
+                    $tmp = $tmp->crop(new Imagine\Image\Point(0, 0), $box);
+                } else if ($op == "thumb") {
+                    $tmp = $tmp->thumbnail($box);
+                }
+            }
+
+            $tmp->save($this->getFilePath($size));
+        }
+    }
+
+    private function getBaseDir()
+    {
+        static $rootDir = null;
+        if(!$rootDir) {
+            $rootDir = $this->getModule()->rootDir;
+        }
+        return $rootDir . "/" . $this->holder->type;
+    }
+
+    private function getFilePath($size)
+    {
+        // TODO: save image extension
+        return $this->getBaseDir() . "/" . $size . "/" . $this->id . "." . $this->getModule()->ext;
+    }
+
+    /**
+     * @return Imagine\Image\ImagineInterface
+     */
+    private function getImagine() {
+        return Yii::app()->imagine->getImagine();
+    }
+
+    /**
+     * @return ImagesHolderModule
+     */
+    private function getModule() {
+        return Yii::app()->getModule("imagesHolder");
     }
 }

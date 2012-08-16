@@ -1,3 +1,4 @@
+<h6><?=Yii::t("app", "Images $type")?></h6>
 <? foreach ($images as $im) { ?>
 <div class="row">
     <?=CHtml::image($im->getSrc($preview))?>
@@ -12,3 +13,4 @@
     <?=CHtml::textField("image_add_title_{$type}_$i")?>
 </div>
 <? } ?>
+<hr/>

@@ -14,149 +14,28 @@ class ImagesHolderModule extends CWebModule
         ));
     }
 
-    public function setImages(ImagesHolder $holder)
+    public function saveModel(ImagesHolderModel $model)
     {
-        // update old images
-        foreach ($holder->images as $im) {
-            $this->updateImageFromPost($im);
-        }
-
-        // set new ones
-        $maxNewNum = $this->getMaxNewNum($holder);
-
-        for ($i = 0; $i < $maxNewNum; $i++) {
-            $f = CUploadedFile::getInstanceByName("image_add_" . $holder->type . "_" . $i);
-            if (!$f) {
-                continue;
-            }
-
-            $title = $_POST["image_add_title_{$holder->type}_$i"];
-            if (!$title) {
-                $title = $f->name;
-            }
-
-            $im = new HeldImage();
-            $im->holder_id = $holder->id;
-            $im->title = $title;
-            if ($im->save()) {
-                $this->setImageFile($im, $f->tempName);
+        $holdersCreated = array();
+        foreach ($model->imageHolders() as $field => $type) {
+            if (!$model->$field || !ImagesHolder::model()->findByPk($model->$field)) {
+                $holder = new ImagesHolder();
+                $holder->type = $type;
+                $holder->save();
+                $holdersCreated[$field] = $holder->id;
             }
         }
-    }
-
-    private function updateImageFromPost(HeldImage $im)
-    {
-        if (isset($_POST["image_{$im->id}_remove"])) {
-            $im->delete();
-            return;
+        if (count($holdersCreated)) {
+            Yii::app()->db->createCommand()->update($model->tableName(), $holdersCreated, "id=" . $model->id);
         }
-
-        $f = CUploadedFile::getInstanceByName("image_" . $im->id . "_file");
-        if ($f) {
-            $this->setImageFile($im, $f->tempName);
+        foreach ($model->imageHolders() as $field => $type) {
+            $holder = ImagesHolder::model()->findByPk($model->$field ? : $holdersCreated[$field]);
+            if ($holder) $holder->setImagesFromPost();
         }
-
-        if (isset($_POST["image_{$im->id}_title"])) {
-            if ($im->title == $_POST["image_{$im->id}_title"]) return;
-            $im->title = $_POST["image_{$im->id}_title"];
-            $im->save();
-        }
-    }
-
-    public function setImageFile(HeldImage $image, $filename)
-    {
-        if (!$image->id) {
-            throw new Exception("Cannot set image file to unsaved domain");
-        }
-
-        /* @var $imagine Imagine\Image\ImagineInterface */
-        $imagine = Yii::app()->imagine->getImagine();
-        $im = $imagine->open($filename);
-
-        $params = $this->getParamsByHolder($image->holder);
-        $basedir = $this->getBaseDir($image->holder);
-        if (!is_dir($basedir)) mkdir($basedir);
-
-        foreach ($params["sizes"] as $size => $info) {
-            if (!is_dir($basedir . "/" . $size)) {
-                mkdir($basedir . "/" . $size);
-            }
-
-            $tmp = clone $im;
-
-            if($info) {
-
-                list($w, $h) = explode("x", $info, 2);
-                $op = "resize";
-                if(strpos($h, " ")) {
-                    list($h, $op) = explode(" ", $h, 2);
-                }
-
-                $size = new Imagine\Image\Box($w, $h);
-                if($op == "resize") {
-                    $tmp = $tmp->resize($size);
-                } else if($op == "crop") {
-                    $tmp = $tmp->crop(new Imagine\Image\Point(0, 0), $size);
-                } else if($op == "thumb") {
-                    $tmp = $tmp->thumbnail($size);
-                }
-            }
-
-            $tmp->save($this->getFilePath($image, $size));
-        }
-    }
-
-    public function deleteImage(HeldImage $image)
-    {
-        $params = $this->getParamsByHolder($image->holder);
-
-        foreach (array_keys($params["sizes"]) as $size) {
-            if (is_file($this->getFilePath($image, $size))) {
-                unlink($this->getFilePath($image, $size));
-            }
-        }
-    }
-
-    public function deleteHolder(ImagesHolder $holder)
-    {
-        foreach ($holder->images as $im) $im->delete();
-    }
-
-    private function getBaseDir(ImagesHolder $holder)
-    {
-        return $this->rootDir . "/" . $holder->type;
     }
 
     public function getParamsByType($type)
     {
         return $this->types[$type];
-    }
-
-    public function getParamsByHolder(ImagesHolder $holder)
-    {
-        return $this->getParamsByType($holder->type);
-    }
-
-    public function getSrc(HeldImage $image, $size)
-    {
-        return "/" . $this->getFilePath($image, $size);
-    }
-
-    public function getMaxNewNum($holder, $type=null)
-    {
-        if(!$holder) {
-            $params = $this->getParamsByType($type);
-            return $params["maxNum"] ? $params["maxNum"] : 5;
-        }
-        $params = $this->getParamsByHolder($holder);
-        $maxNum = $params["maxNum"];
-
-        if (!$maxNum) return 5;
-        else return $maxNum - count($holder->images);
-    }
-
-    private function getFilePath(HeldImage $image, $size)
-    {
-        return $this->getBaseDir($image->holder) . "/" . $size . "/" . $image->id . "." . $this->ext;
     }
 }

@@ -8,19 +8,20 @@
  */
 class EditImages extends CWidget
 {
-    public $type;
+    /* @var ImagesHolder */
     public $holder;
 
     public function run()
     {
-        // One have to be set
-        if (!$this->type) {
-            $this->type = $this->holder->type;
+        if(is_string($this->holder)) {
+            $t = $this->holder;
+            $this->holder = new ImagesHolder();
+            $this->holder->type = $t;
         }
 
         // We need maxNum and preview size name to render edit
-        $maxNum = Yii::app()->getModule("imagesHolder")->getMaxNewNum($this->holder, $this->type);
-        $params = Yii::app()->getModule("imagesHolder")->getParamsByType($this->type);
+        $maxNum = $this->holder->getMaxNewImages();
+        $params = $this->holder->getModuleParams();
         $previewSize = $params["preview"];
 
         $images = array();
@@ -29,7 +30,7 @@ class EditImages extends CWidget
         }
 
         $this->render("editImages", array(
-            "type" => $this->type,
+            "type" => $this->holder->type,
             "images" => $images,
             "maxNum" => $maxNum,
             "preview" => $previewSize
