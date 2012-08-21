@@ -14,24 +14,13 @@ class ImagesHolderModule extends CWebModule
         ));
     }
 
+    /**
+     * @deprecated
+     * @param ImagesHolderModel $model
+     */
     public function saveModel(ImagesHolderModel $model)
     {
-        $holdersCreated = array();
-        foreach ($model->imageHolders() as $field => $type) {
-            if (!$model->$field || !ImagesHolder::model()->findByPk($model->$field)) {
-                $holder = new ImagesHolder();
-                $holder->type = $type;
-                $holder->save();
-                $holdersCreated[$field] = $holder->id;
-            }
-        }
-        if (count($holdersCreated)) {
-            Yii::app()->db->createCommand()->update($model->tableName(), $holdersCreated, "id=" . $model->id);
-        }
-        foreach ($model->imageHolders() as $field => $type) {
-            $holder = ImagesHolder::model()->findByPk($model->$field ? : $holdersCreated[$field]);
-            if ($holder) $holder->setImagesFromPost();
-        }
+        Yii::log("Calling to ImagesHolderModule::saveModel() is deprecated. Use ImagesHolderBehaviour instead", CLogger::LEVEL_WARNING);
     }
 
     public function getParamsByType($type)
