@@ -5,7 +5,7 @@
  */
 class ImagesHolderBehavior extends CActiveRecordBehavior
 {
-    public function afterSave(CModelEvent $event) {
+    public function afterSave($event) {
         /* @var $model ImagesHolderModel */
         $model = $this->owner;
         $holdersCreated = array();

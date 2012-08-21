@@ -14,6 +14,7 @@ Usage
 0) Create relation for your model to `ImagesHolder` class, e.g.:
 
 ```php
+<?
 	public function up()
 	{
         $this->addColumn("{{static_page}}", "pic_holder_id", "int");
@@ -26,7 +27,7 @@ Usage
 1) Implement `ImagesHolderModel` interface on your model class and add `ImagesHolderBehaviour`:
 
 ```php
-
+<?
 class StaticPage extends BaseStaticPage implements ImagesHolderModel {
 
         #...
@@ -74,6 +75,7 @@ class StaticPage extends BaseStaticPage implements ImagesHolderModel {
 2) Modify your `_form.php` partial template (or any other form template where you wish to save images):
 
 ```php
+<?
 // images holder integration
 $modelRefl = new ReflectionClass($model);
 $imageHolders = array();
@@ -102,6 +104,7 @@ if($modelRefl->implementsInterface("ImagesHolderModel")) {
 You may (and probably should) use your own widgets to render held images. `ImagesHolder->images` is an array of `HeldImage` objects:
 
 ```php
+<?
 class HeldImage {
     public function getSrc($size);
     #...
@@ -113,12 +116,13 @@ Sizes are got from the config.
 Installation
 ----------------
 
-```sh
+```bash
 git submodule add git@github.com:alari/yii-imagesHolder.git protected/modules/imagesHolder
 git submodule add git@github.com:alari/yii-imagine.git protected/extensions/imagine
 ```
 
 ```php
+<?
     'import' => array(
         // For imagesHolder
         'application.modules.imagesHolder.models.*',
