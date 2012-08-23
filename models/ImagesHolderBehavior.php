@@ -3,7 +3,7 @@
  * @author alari
  * @since 8/21/12 3:16 PM
  */
-class ImagesHolderBehavior extends CActiveRecordBehavior implements IFormMixin
+class ImagesHolderBehavior extends CActiveRecordBehavior implements IFormMixinBehavior
 {
     public function afterSave($event) {
         /* @var $model ImagesHolderModel */
