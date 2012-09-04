@@ -42,7 +42,7 @@ class ImagesHolder extends BaseImagesHolder
             $im->holder_id = $this->id;
             $im->title = $title;
             if ($im->save()) {
-                $im->setImageFile($f->tempName);
+                $im->setImageFile($f->tempName, $f->extensionName);
             }
         }
     }

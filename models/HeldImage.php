@@ -1,8 +1,8 @@
 <?php
 
-Yii::import('imagesHolder.models._base.BaseImage');
+Yii::import('imagesHolder.models._base.BaseHeldImage');
 
-class HeldImage extends BaseImage
+class HeldImage extends BaseHeldImage
 {
     public static function model($className = __CLASS__)
     {
@@ -37,7 +37,7 @@ class HeldImage extends BaseImage
 
         $f = CUploadedFile::getInstanceByName("image_" . $this->id . "_file");
         if ($f) {
-            $this->setImageFile($f->tempName);
+            $this->setImageFile($f->tempName, $f->extensionName);
         }
 
         if (isset($_POST["image_{$this->id}_title"])) {
@@ -50,13 +50,15 @@ class HeldImage extends BaseImage
     /**
      * @private
      */
-    public function setImageFile($filename) {
+    public function setImageFile($filename, $ext) {
         /* @var $imagine ImagineYii */
         $imagine = Yii::app()->imagine;
 
         $params = $this->holder->getModuleParams();
         $basedir = $this->getBaseDir();
         if (!is_dir($basedir)) mkdir($basedir, 0777, true);
+
+        $this->ext = $ext == "jpeg" ? "jpg" : $ext;
 
         foreach ($params["sizes"] as $size => $info) {
             if (!is_dir($basedir . "/" . $size)) {
@@ -95,8 +97,7 @@ class HeldImage extends BaseImage
 
     private function getFilePath($size)
     {
-        // TODO: save image extension
-        return $this->getBaseDir() . "/" . $size . "/" . $this->id . "." . $this->getModule()->ext;
+        return $this->getBaseDir() . "/" . $size . "/" . $this->id . "." . $this->ext;
     }
 
     /**
