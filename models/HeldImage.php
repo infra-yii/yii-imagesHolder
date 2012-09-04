@@ -43,8 +43,8 @@ class HeldImage extends BaseHeldImage
         if (isset($_POST["image_{$this->id}_title"])) {
             if ($this->title == $_POST["image_{$this->id}_title"]) return;
             $this->title = $_POST["image_{$this->id}_title"];
-            $this->save();
         }
+        $this->save();
     }
 
     /**
