@@ -64,22 +64,9 @@ class HeldImage extends BaseHeldImage
             if (!is_dir($basedir . "/" . $size)) {
                 mkdir($basedir . "/" . $size);
             }
-
+ 
             if ($info) {
-                list($w, $h) = explode("x", $info, 2);
-                $op = "resize";
-                if (strpos($h, " ")) {
-                    list($h, $op) = explode(" ", $h, 2);
-                }
-
-                if ($op == "crop") {
-                    $im = $imagine->crop($filename, $w, $h);
-                } else if ($op == "thumb") {
-                    $im = $imagine->thumb($filename, $w, $h);
-                } else {
-                    $im = $imagine->resize($filename, $w, $h);
-                }
-                $im->save($this->getFilePath($size));
+                $imagine->handleAndSave($filename, $info, $this->getFilePath($size));
             } else {
                 copy($filename, $this->getFilePath($size));
             }
