@@ -5,6 +5,8 @@
  */
 class ImagesHolderBehavior extends CActiveRecordBehavior implements IFormMixinBehavior
 {
+    public $editViews = array();
+    
     public function afterSave($event) {
         /* @var $model ImagesHolderModel */
         $model = $this->owner;
@@ -45,9 +47,17 @@ class ImagesHolderBehavior extends CActiveRecordBehavior implements IFormMixinBe
                 $h[0] = strtolower($h[0]);
                 $imageHolders[$h] = $t;
             }
-            if(count($imageHolders)){?>
+            if(count($imageHolders)){
+                ?>
             <fieldset>
-                <?foreach($imageHolders as $field=>$type) Yii::app()->controller->widget("imagesHolder.widgets.heldImages.EditImages", array("holder"=>(($model && $model->$field) ? $model->$field : $type))) ?>
+                <?
+                foreach($imageHolders as $field=>$type) {
+                    $widgetParams = array("holder"=>(($model && $model->$field) ? $model->$field : $type));
+                    if(array_key_exists($field, $this->editViews)) {
+                        $widgetParams["view"] = $this->editViews[$field];
+                    }
+                    Yii::app()->controller->widget("imagesHolder.widgets.heldImages.EditImages", $widgetParams);
+                }?>
             </fieldset>
             <?}
         } else {
