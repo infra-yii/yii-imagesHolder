@@ -10,6 +10,7 @@ class EditImages extends CWidget
 {
     /* @var ImagesHolder */
     public $holder;
+    public $view = "editImages";
 
     public function run()
     {
@@ -29,7 +30,7 @@ class EditImages extends CWidget
             $images = $this->holder->images;
         }
 
-        $this->render("editImages", array(
+        $this->render($this->view, array(
             "type" => $this->holder->type,
             "images" => $images,
             "maxNum" => $maxNum,
