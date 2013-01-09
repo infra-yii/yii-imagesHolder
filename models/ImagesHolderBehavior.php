@@ -23,7 +23,7 @@ class ImagesHolderBehavior extends CActiveRecordBehavior implements IFormMixinBe
             Yii::app()->db->createCommand()->update($model->tableName(), $holdersCreated, "id=" . $model->id);
         }
         foreach ($model->imageHolders() as $field => $type) {
-            $holder = ImagesHolder::model()->findByPk($model->$field ? : $holdersCreated[$field]);
+            $holder = ImagesHolder::model()->findByPk($model->$field ? $model->$field : $holdersCreated[$field]);
             if ($holder) $holder->setImagesFromPost();
         }
     }
